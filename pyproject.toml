@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "camshell"
+version = "0.1.0"
+description = "A simple tool to stream camera in shell."
+authors = ["Aref Mehr <aref.moqadam@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+scripts = { "camshell" = "camshell.cli:cli" }
+
+[tool.poetry.dependencies]
+python = "^3.13"
+click = "^8.1.7"
+asciimatics = "^1.15.0"
+opencv-python = "^4.10.0.84"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+mypy = "^1.14.0"
+isort = "^5.13.2"
+twine = "^6.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
