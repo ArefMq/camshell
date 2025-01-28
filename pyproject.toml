@@ -8,7 +8,7 @@ license = "MIT"
 scripts = { "camshell" = "camshell.cli:cli" }
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.10"
 click = "^8.1.7"
 asciimatics = "^1.15.0"
 opencv-python = "^4.10.0.84"
