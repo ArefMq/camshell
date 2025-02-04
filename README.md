@@ -31,22 +31,22 @@ camshell /dev/video3
 
 ## Python API Usage
 
-If you’d like to use XDisplay in your Python code, here’s how:
+If you’d like to use CamShell in your Python code, here’s how:
 
 ```python
-from camshell.xdisplay import XDisplay as CamShellDisplay
+from camshell import CamShell
 
 # simply call:
 device_id = "/dev/video0"
-CamShellDisplay.start(device_id)
+CamShell.start(device_id)
 ```
 
 Run on a custom screen
 
 ```python
 from asciimatics.screen import Screen
-from camshell.xdisplay import XDisplay as CamShellDisplay
+from camshell import CamShell
 
-with XDisplay(cap_id="/dev/video0") as display:
+with CamShell(cap_id="/dev/video0") as display:
     Screen.wrapper(display.run)
 ```
