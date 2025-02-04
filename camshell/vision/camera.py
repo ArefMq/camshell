@@ -1,7 +1,6 @@
-from loguru import logger
 from camshell.interfaces import Camera, Image, Size
-from camshell.vision.gstream_pipeline import GStreamerPipeline
 from camshell.vision import gstream_components as components
+from camshell.vision.gstream_pipeline import GStreamerPipeline
 
 
 class MacosCamera(GStreamerPipeline, Camera):

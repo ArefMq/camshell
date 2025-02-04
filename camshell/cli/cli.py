@@ -1,4 +1,5 @@
 import platform
+
 import click
 
 from camshell.camshell_core import CamShell

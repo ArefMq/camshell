@@ -1,13 +1,10 @@
-from abc import ABC
-from contextlib import contextmanager
 import threading
-from time import sleep
+from abc import ABC
 
-from matplotlib.pylab import Generator
-from camshell.vision.gstream_components import GStreamComponent
 from loguru import logger
 
 from camshell.vision.__gi import GLib, Gst
+from camshell.vision.gstream_components import GStreamComponent
 
 
 class GStreamerPipeline(ABC):
