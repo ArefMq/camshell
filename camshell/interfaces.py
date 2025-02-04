@@ -48,21 +48,6 @@ class Image:
             return 0.299 * r + 0.587 * g + 0.114 * b
         return self.__getslice__(x, y)
     
-    # def resize(self, newSize: Size) -> "Image":
-    #     if newSize == self.size:
-    #         return self
-    #     if not self._coloured:
-    #         raise NotImplementedError
-        
-    #     scale = self.size / newSize
-    #     data = bytearray([0] * (newSize.width * newSize.height * 3))
-
-    #     for y in range(newSize.height):
-    #         for x in range(newSize.width):
-    #             old_x, old_y = int(x * scale[0]), int(y * scale[1])
-    #             data[(y * newSize.width + x) * 3 : (y * newSize.width + x + 1) * 3] = self.__getslice__(old_x, old_y)
-    #     return Image(data, newSize)
-
     def resize(self, newSize: Size) -> "Image":
         if newSize == self.size:
             return self
@@ -74,15 +59,12 @@ class Image:
 
         for y in range(newSize.height):
             for x in range(newSize.width):
-                # Calculate the position in the original image
                 old_x = (x + 0.5) * scale[0] - 0.5
                 old_y = (y + 0.5) * scale[1] - 0.5
 
-                # Get surrounding pixel coordinates
                 x0, y0 = int(old_x), int(old_y)
                 x1, y1 = min(x0 + 1, self.size.width - 1), min(y0 + 1, self.size.height - 1)
 
-                # Bilinear interpolation to calculate the weighted average of the neighboring pixels
                 dx, dy = old_x - x0, old_y - y0
                 top_left = self.__getslice__(x0, y0)
                 top_right = self.__getslice__(x1, y0)
@@ -93,7 +75,6 @@ class Image:
                 bottom = [(1 - dx) * bottom_left[i] + dx * bottom_right[i] for i in range(3)]
                 pixel = [(1 - dy) * top[i] + dy * bottom[i] for i in range(3)]
 
-                # Store the new pixel value
                 data[(y * newSize.width + x) * 3 : (y * newSize.width + x + 1) * 3] = bytearray([int(v) for v in pixel])
 
         return Image(data, newSize)
