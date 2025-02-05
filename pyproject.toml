@@ -10,7 +10,6 @@ scripts = { "camshell" = "camshell.cli.cli:cli" }
 [tool.poetry.dependencies]
 python = "^3.10"
 click = "^8.1.7"
-asciimatics = "^1.15.0"
 pygobject = "^3.50.0"
 loguru = "^0.7.3"
 
