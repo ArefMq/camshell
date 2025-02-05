@@ -3,18 +3,25 @@ from camshell.vision import gstream_components as components
 from camshell.vision.gstream_pipeline import GStreamerPipeline
 
 
-class MacosCamera(GStreamerPipeline, Camera):
-    def __init__(self, **kwargs):
+class GenericCamera(GStreamerPipeline, Camera):
+    def __init__(self, avf_source: bool = False, **kwargs):
         super().__init__()
-        self.pipeline_description = (
+        video_source = (
             components.AVFVideoSource(kwargs)
-            # + components.VideoRaw(kwargs)
+            if avf_source
+            else components.V4L2Source(kwargs)
+        )
+        self.pipeline_description = (
+            video_source
             + components.VideoRate(kwargs)
             + components.VideoConvert(kwargs)
             + components.Queue()
             + components.AppSink()
         )
         self.__optimized_size: Size | None = None
+
+    def initialize(self, timeout: float | None = 300):
+        return super().initialize(timeout=timeout)
 
     def optimize_for(self, size: Size) -> None:
         self.__optimized_size = size

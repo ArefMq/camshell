@@ -11,9 +11,10 @@ class GStreamerPipeline(ABC):
     def __init__(self):
         self.pipeline_description: str | GStreamComponent | None = None
         self.pipeline: Gst.Pipeline | None = None
-        self.__cap_write_lock = GLib.Mutex()
+        # self.__cap_write_lock = GLib.Mutex()
         self.lock = threading.Lock()
         self.__buffer_caps: tuple[Gst.Buffer, Gst.Caps] | None = None
+        self.__first_sample = threading.Event()
 
     def on_new_sample(self, sink: Gst.Element) -> Gst.FlowReturn:
         try:
@@ -23,6 +24,7 @@ class GStreamerPipeline(ABC):
                 caps = sample.get_caps()
                 with self.lock:
                     self.__buffer_caps = (buffer, caps)
+                    self.__first_sample.set()
             return Gst.FlowReturn.OK
         except Exception as e:
             logger.error(f"Error on new sample: {e}")
@@ -80,7 +82,11 @@ class GStreamerPipeline(ABC):
         assert self.pipeline is not None, "Pipeline has not been created"
         self.pipeline.set_state(Gst.State.PLAYING)
 
-    def initialize(self, description: str | GStreamComponent | None = None) -> None:
+    def initialize(
+        self,
+        description: str | GStreamComponent | None = None,
+        timeout: float | None = 300,
+    ) -> None:
         if description:
             self.pipeline_description = description
         logger.info("Initializing GStreamer pipeline")
@@ -94,6 +100,12 @@ class GStreamerPipeline(ABC):
         except Exception as exp:
             raise RuntimeError("Failed to start pipeline") from exp
         logger.success("Pipeline created")
+        if timeout is not None:
+            logger.info("Waiting for the first sample")
+            if self.__first_sample.wait(timeout):
+                logger.success("First sample received")
+            else:
+                raise TimeoutError("Timeout waiting for the first sample")
 
     def finalize(self) -> None:
         if self.pipeline:

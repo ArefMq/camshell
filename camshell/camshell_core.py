@@ -22,9 +22,9 @@ class CamShell:
         return self.display.get_size()
 
     def initialize(self) -> None:
+        self.camera.initialize()
         self.display.initialize()
         self.camera.optimize_for(self.size)
-        self.camera.initialize()
 
     def finalize(self) -> None:
         self.camera.finalize()

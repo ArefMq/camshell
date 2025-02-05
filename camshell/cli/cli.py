@@ -3,8 +3,8 @@ import platform
 import click
 
 from camshell.camshell_core import CamShell
-from camshell.display.curses_screen import CursesScreenImproved
-from camshell.vision.camera import MacosCamera
+from camshell.display.curses_screen import MoreResolutionScreen as CursesScreen
+from camshell.vision.camera import GenericCamera
 
 
 @click.command()
@@ -19,8 +19,10 @@ def cli(cap_id: str | None):
     if cap_id is None:
         cap_id = 0 if platform.system() == "Darwin" else "/dev/video0"
     try:
-        camera = MacosCamera(device_index=0, max_rate=5)
-        display = CursesScreenImproved()
+        camera = GenericCamera(
+            device_index=cap_id, max_rate=20, avf_source=platform.system() == "Darwin"
+        )
+        display = CursesScreen()
 
         cs = CamShell(camera, display)
         cs.initialize()
