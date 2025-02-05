@@ -61,3 +61,7 @@ cs = CamShell(camera, display)
 cs.initialize()
 cs.run()
 ```
+
+## Output Example
+
+![Example Output](https://github.com/ArefMq/camshell/blob/main/docs/screenshot.png)
