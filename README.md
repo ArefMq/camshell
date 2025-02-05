@@ -2,7 +2,6 @@
 
 CamShell, A simple way to stream a camera as ASCII art directly in a terminal.
 
-
 ## Installation
 
 Using pip:
@@ -38,15 +37,27 @@ from camshell import CamShell
 
 # simply call:
 device_id = "/dev/video0"
-CamShell.start(device_id)
+CamShell.start(device_index=device_id)
+
+# or in case of MacOS
+CamShell.start(avf_source=True)
 ```
 
 Run on a custom screen
 
 ```python
-from asciimatics.screen import Screen
 from camshell import CamShell
+from camshell.display import Display
+from camshell.vision.camera import GenericCamera
 
-with CamShell(cap_id="/dev/video0") as display:
-    Screen.wrapper(display.run)
+# Create a GStream-based camera object
+camera = GenericCamera(device_index=cap_id, avf_source=True)
+
+# Create a Curses display
+display = Display()
+
+# Create and run the CamShell
+cs = CamShell(camera, display)
+cs.initialize()
+cs.run()
 ```

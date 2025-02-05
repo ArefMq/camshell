@@ -47,3 +47,13 @@ class CamShell:
 
     def stop(self) -> None:
         self.__shutdown_event.set()
+
+    @classmethod
+    def start(cls, **kwargs) -> None:
+        from camshell.display import Display
+        from camshell.vision.camera import GenericCamera
+
+        camera = GenericCamera(**kwargs)
+        display = Display()
+        cls = cls(camera, display)
+        cls.run()

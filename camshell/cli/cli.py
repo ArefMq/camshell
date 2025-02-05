@@ -2,8 +2,8 @@ import platform
 
 import click
 
-from camshell.camshell_core import CamShell
-from camshell.display.curses_screen import MoreResolutionScreen as CursesScreen
+from camshell import CamShell
+from camshell.display import Display
 from camshell.vision.camera import GenericCamera
 
 
@@ -22,7 +22,7 @@ def cli(cap_id: str | None):
         camera = GenericCamera(
             device_index=cap_id, max_rate=20, avf_source=platform.system() == "Darwin"
         )
-        display = CursesScreen()
+        display = Display()
 
         cs = CamShell(camera, display)
         cs.initialize()
