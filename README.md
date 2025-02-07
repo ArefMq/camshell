@@ -2,8 +2,6 @@
 
 CamShell, a light weight ASCII art video streamer.
 
-[![](https://markdown-videos-api.jorgenkh.no/youtube/erU1So2IP7E)](https://youtu.be/erU1So2IP7E)
-
 ## Installation
 
 Using pip:
@@ -70,3 +68,5 @@ cs.run()
 ## Output Example
 
 ![Example Output](https://github.com/ArefMq/camshell/blob/main/docs/screenshot_shrek.png)
+
+[![](https://markdown-videos-api.jorgenkh.no/youtube/erU1So2IP7E)](https://youtu.be/erU1So2IP7E)
