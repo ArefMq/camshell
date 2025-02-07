@@ -1,6 +1,8 @@
 # CamShell
 
-CamShell, A simple way to stream a camera as ASCII art directly in a terminal.
+CamShell, a light weight ASCII art video streamer.
+
+[![](https://markdown-videos-api.jorgenkh.no/youtube/erU1So2IP7E)](https://youtu.be/erU1So2IP7E)
 
 ## Installation
 
