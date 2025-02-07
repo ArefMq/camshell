@@ -6,11 +6,7 @@ from camshell.vision.gstream_pipeline import GStreamerPipeline
 
 
 class GenericCamera(GStreamerPipeline, Camera):
-    """Generic camera that reads from a GStream device.
-
-    Args:
-
-    """
+    """Generic camera that reads from a GStream device."""
 
     class Source(Enum):
         V4L2 = "v4l2"
