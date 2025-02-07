@@ -2,7 +2,7 @@
 
 CamShell, a light weight ASCII art video streamer.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/erU1So2IP7E?si=54mQQLTjYzySn3Jd" title="Shrek Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![](https://markdown-videos-api.jorgenkh.no/youtube/erU1So2IP7E)](https://youtu.be/erU1So2IP7E)
 
 ## Installation
 
