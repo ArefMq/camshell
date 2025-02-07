@@ -26,6 +26,9 @@ camshell 1
 
 # Or a device path specifically
 camshell /dev/video3
+
+# Or stream from a file
+camshell -f ./my_video.mp4
 ```
 
 ## Python API Usage
@@ -64,4 +67,4 @@ cs.run()
 
 ## Output Example
 
-![Example Output](https://github.com/ArefMq/camshell/blob/main/docs/screenshot.png)
+![Example Output](https://github.com/ArefMq/camshell/blob/main/docs/screenshot_shrek.png)

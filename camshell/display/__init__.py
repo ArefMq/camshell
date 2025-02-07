@@ -1,3 +1,3 @@
-from .curses_screen import MoreResolutionScreen as Display
+from .curses_screen import EfficientScreen as Display
 
 __all__ = ["Display"]

@@ -55,6 +55,14 @@ class AVFVideoSource(GStreamComponent):
         )
 
 
+class FileSource(GStreamComponent):
+    def __init__(self, arguments: dict[str, str]):
+        super().__init__(
+            "filesrc location={file_path} ! decodebin",
+            arguments,
+        )
+
+
 class VideoRaw(GStreamComponent):
     def __init__(self, arguments: dict[str, str]):
         super().__init__(

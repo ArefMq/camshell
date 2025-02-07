@@ -1,4 +1,5 @@
 import curses
+from typing import Callable
 
 from camshell.interfaces import Display, Image, Size
 
@@ -78,8 +79,13 @@ class CursesScreen(Display):
         for y in range(min(image.size.height, self.__screen_size.height)):
             for x in range(min(image.size.width, self.__screen_size.width)):
                 char, color = self.resolve_pixel(image, x, y)
-                self.screen.addch(y, x, char, curses.color_pair(color))
+                self.add_char(x, y, char, color)
+        self.refresh()
 
+    def add_char(self, x: int, y: int, char: str, color: int) -> None:
+        self.screen.addch(y, x, char, curses.color_pair(color))
+
+    def refresh(self) -> None:
         self.screen.refresh()
 
 
@@ -111,11 +117,40 @@ class CursesScreenImproved(CursesScreen):
 
 
 class MoreResolutionScreen(CursesScreenImproved):
+    class BrailleKalmanFilter:
+        Q = 0.5  # Process noise: how much we allow changes in balance
+        R = 0.1  # Measurement noise: how much we trust the new measurement
+
+        def __init__(self, target: float, x_func: Callable[[], float]) -> None:
+            self.target = target
+            self.__x_func = x_func
+            self.estimate = None
+
+        def update(self) -> float:
+            if (value := self.__x_func()) is None:
+                return self.estimate
+
+            if self.estimate is None:
+                self.estimate = value
+                return self.estimate
+
+            self.Q = max(0.01, self.Q * 0.5)
+            K = self.Q / (self.Q + self.R)
+            measurement = self.target - value
+            self.estimate += K * (measurement)
+
+            self.estimate = max(0, min(self.estimate, 1))
+            return self.estimate
+
     def __init__(self, mono_color=False, gamma=(1.1, 1, 1, 10)):
         super().__init__(mono_color, gamma)
         self.braille_balance = 0.5
         self.__braille_balance_controller = 0
         self.__num_of_pixels = 0
+        self.__kalman = self.BrailleKalmanFilter(
+            target=0.5,
+            x_func=lambda: self.__braille_balance_controller / self.__num_of_pixels,
+        )
 
     def get_size(self):
         return super().get_size() * Size(2, 2)
@@ -166,19 +201,36 @@ class MoreResolutionScreen(CursesScreenImproved):
 
     def render(self, image: Image) -> None:
         super().render(image.resize(self.get_size()))
-        self.balance_braille()
-
-    def balance_braille(self):
-        alpha = 0.1
-        target_balance = 0.5
-        if self.__num_of_pixels == 0:
-            return
-
-        brightness_ratio = self.__braille_balance_controller / self.__num_of_pixels
-        adjustment = self.braille_balance + target_balance - brightness_ratio
-        self.braille_balance = max(
-            min((1 - alpha) * self.braille_balance + alpha * adjustment, 1), 0
-        )
-
+        self.braille_balance = self.__kalman.update()
         self.__num_of_pixels = 0
         self.__braille_balance_controller = 0
+
+
+class EfficientScreen(MoreResolutionScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__cache_size: Size = Size(0, 0)
+        self.__cache_chars = ""
+        self.__cache_colors = []
+
+    def render(self, image: Image) -> None:
+        if (
+            self.__cache_size is None
+            or self.__cache_size.width != image.size.width
+            or self.__cache_size.height != image.size.height
+        ):
+            self.__cache_size = image.size
+            self.__cache_chars = (
+                [" "] * self.__cache_size.width * self.__cache_size.height
+            )
+            self.__cache_colors = (
+                [127] * self.__cache_size.width * self.__cache_size.height
+            )
+        super().render(image)
+
+    def add_char(self, x, y, char, color) -> None:
+        index = y * self.__cache_size.width + x
+        if self.__cache_chars[index] != char or self.__cache_colors[index] != color:
+            self.__cache_chars[index] = char
+            self.__cache_colors[index] = color
+            super().add_char(x, y, char, color)

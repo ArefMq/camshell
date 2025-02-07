@@ -100,7 +100,7 @@ class Image:
                 pixel = [(1 - dy) * top[i] + dy * bottom[i] for i in range(3)]
 
                 data[(y * newSize.width + x) * 3 : (y * newSize.width + x + 1) * 3] = (
-                    bytearray([int(v) for v in pixel])
+                    bytearray([min(max(int(v), 0), 255) for v in pixel])
                 )
 
         return Image(data, newSize)
