@@ -19,7 +19,7 @@ class Size:
         return Size(self.width * other.width, self.height * other.height)
 
     def __getitem__(self, index: int) -> int:
-        assert index in (0, 1), "Index must be 0 or 1"
+        assert index in (0, 1), f"Index must be 0 or 1, got {index}"
         return self.width if index == 0 else self.height
 
     def __add__(self, other: Union["Size", float, int]) -> "Size":

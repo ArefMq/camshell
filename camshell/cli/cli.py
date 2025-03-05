@@ -48,7 +48,7 @@ def cli(cap_id: str | None, arguments: str | None, file: str | None) -> None:
 
     try:
         camera = GenericCamera(**args)
-        display = Display()
+        display = Display(frame_time_limit=1/30)
 
         cs = CamShell(camera, display)
         cs.initialize()
