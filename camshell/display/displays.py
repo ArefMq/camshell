@@ -18,6 +18,26 @@ class PixelPair:
     bottom_b: int
 
     def distance_to(self, other: "PixelPair") -> float:
+        # TODO: This part is to compare the intensity of the pixels rather than the RGB-colors
+        #       I am not sure how well this would behave. It would be nice to test this.
+        
+        # top_intensity = int(0.299 * self.top_r + 0.587 * self.top_g + 0.114 * self.top_b)
+        # bottom_intensity = int(
+        #     0.299 * self.bottom_r + 0.587 * self.bottom_g + 0.114 * self.bottom_b
+        # )
+
+        # other_top_intensity = int(
+        #     0.299 * other.top_r + 0.587 * other.top_g + 0.114 * other.top_b
+        # )
+        # other_bottom_intensity = int(
+        #     0.299 * other.bottom_r + 0.587 * other.bottom_g + 0.114 * other.bottom_b
+        # )
+
+        # return max(
+        #     (top_intensity - other_top_intensity) << 1,
+        #     (bottom_intensity - other_bottom_intensity) << 1,
+        # )
+
         return max(
             # Top pixel
             ((self.top_r - other.top_r) << 1)
@@ -73,7 +93,7 @@ class Change:
 
     @classmethod
     def from_pixels(cls, old_pixel: PixelPair, new_pixel: PixelPair) -> "Change":
-        return cls(new_pixel, new_pixel.distance_to(old_pixel))
+        return cls(new_pixel, old_pixel.distance_to(new_pixel))
 
     @classmethod
     def NewPixel(cls, pixel: PixelPair) -> "Change":
@@ -83,22 +103,19 @@ class Change:
 @dataclass
 class StreamBuffer:
     __buffer: dict[tuple[int, int], PixelPair] = field(default_factory=dict)
-    __changes: list[Change] = field(default_factory=list)
-
-    def ignore_the_rest(self) -> None:
-        self.__changes = []
+    __changes: dict[tuple[int, int], Change] = field(default_factory=dict)
 
     def set(self, x: int, y: int, p: PixelPair) -> None:
         if (x, y) not in self.__buffer:
-            self.__changes.append(Change.NewPixel(p))
+            self.__changes[(x, y)] = (Change.NewPixel(p))
         elif self.__buffer[(x, y)] == p:
             return
         else:
-            self.__changes.append(self.__buffer[(x, y)] - p)
+            self.__changes[(x, y)] = self.__buffer[(x, y)] - p
         self.__buffer[(x, y)] = p
 
     def changes(self) -> Generator[Change, None, None]:
-        for change in sorted(self.__changes, key=lambda x: x.diff):
+        for change in sorted(self.__changes.values(), key=lambda x: x.diff):
             yield change
 
     def pixels(self) -> Generator[PixelPair, None, None]:
@@ -146,7 +163,6 @@ class CursesScreen(DisplayInterface):
                 if time.monotonic() - t > self.frame_time_limit:
                     break
 
-        self.__buffer.ignore_the_rest()
         self.frames += 1
 
     def screen_get_size(self) -> Size:
