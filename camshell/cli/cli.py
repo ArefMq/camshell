@@ -4,6 +4,7 @@ import click
 
 from camshell import CamShell
 from camshell.display import Display
+from camshell.interfaces import Size
 from camshell.vision.camera import GenericCamera
 
 
@@ -32,7 +33,9 @@ def __parse_arguments(arguments: str) -> dict:
     "--file",
     help="Use file source instead of camera stream.",
 )
-def cli(cap_id: str | None, arguments: str | None, file: str | None) -> None:
+@click.option("--size", help="Size of the display window (default no limit).")
+@click.option("--fps", help="Frames per second (default: no limit).")
+def cli(cap_id: str | None, arguments: str | None, file: str | None, size: str|None, fps:str|None) -> None:
     """
     A Simple CLI to display video feed in terminal.
     """
@@ -48,7 +51,12 @@ def cli(cap_id: str | None, arguments: str | None, file: str | None) -> None:
 
     try:
         camera = GenericCamera(**args)
-        display = Display()
+        display = Display(
+            **{
+                "frame_time_limit": None if fps is None else 1 / int(fps),
+                "max_size": None if size is None else Size(*map(int, size.split("x"))),
+            }
+        )
 
         cs = CamShell(camera, display)
         cs.initialize()
